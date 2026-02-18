@@ -1,9 +1,10 @@
 [project]
 name = "mcp-server"
 version = "0.1.0"
-description = "Add your description here"
+description = "FastMCP-based server implementing the Model Context Protocol for structured tool and context integration."
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
     "fastmcp>=2.14.5",
+    "python-dotenv>=1.2.1",
 ]
