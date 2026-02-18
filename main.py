@@ -1,6 +1,13 @@
-def main():
-    print("Hello from mcp-server!")
+from fastmcp import FastMCP
 
+mcp = FastMCP("velox MCP Server")
+
+@mcp.tool(name='demo_tool', description='This is a demo tool for project inital deployment.')
+def demo_tool():
+    return "This is demo tool"
+
+# for deployment
+# uv sync --frozen
 
 if __name__ == "__main__":
-    main()
+    mcp.run(transport="http", host="0.0.0.0", port=3000)
