@@ -17,7 +17,7 @@ mcp = FastMCP("velox_mcp_server")
         name='demo_tool', 
         description='This is a demo tool for project inital deployment.'
 )
-def demo_tool():
+def demo_tool() -> str:
     return "This is demo tool"
 
 
@@ -29,7 +29,7 @@ def rank_sources_for_query_and_return_context(
     query: str,
     userID: str,
     notebookID: str
-):
+) -> str:
     """
     - It looks at the user's query and figures out which sources are most relevant, then creates a list of (source_id, top_k) pairs.
 
@@ -56,7 +56,7 @@ def rank_sources_for_query_and_return_context(
     )
 
     # return response
-    return response
+    return response.get("context", "")
 
 if __name__ == "__main__":
     mcp.run(
