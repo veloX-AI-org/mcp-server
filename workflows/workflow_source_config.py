@@ -23,42 +23,28 @@ def post_request(state: RetrievalState) -> RetrievalState:
     """
 
     # End point
-    # url = "http://127.0.0.1:8000/getAllDocSummary"
+    url = "https://veloxai.onrender.com/getAllDocSummary"
 
-    # # Prepare all the input to post
-    # header_inputs = {
-    #     "userID": state.indexID,
-    #     "notebookID": state.notebookID,
-    #     "SECRETE_TOKEN": os.getenv("SECRETE_TOKEN")
-    # }
+    # Prepare all the input to post
+    header_inputs = {
+        "userID": state.indexID,
+        "notebookID": state.notebookID,
+        "SECRETE_TOKEN": os.getenv("SECRETE_TOKEN")
+    }
 
-    # # Post request
-    # response = requests.post(
-    #     url=url,
-    #     json=header_inputs
-    # )
+    # Post request
+    response = requests.post(
+        url=url,
+        json=header_inputs
+    )
 
-    # # Handle if response failed
-    # if not response:
-    #     state.listOfSummaries =  [SubState(source_type="Unknown", source_id="Failed get ID.", source_name="Failed to get summary of every docs.", source_summary="Failed to get summary")]
+    # Handle if response failed
+    if not response:
+        state.listOfSummaries =  [SubState(source_type="Unknown", source_id="Failed get ID.", source_name="Failed to get summary of every docs.", source_summary="Failed to get summary")]
 
-    #     return state
+        return state
     
-    # allDocsSummary = response.json().get("message")
-    allDocsSummary =  [
-        {
-            "source_type": "Document",
-            "source_id": "2bba7b24-bb43-4bef-a4c8-81b3cfec379f",
-            "source_summary": "The Translator’s Preface recounts a life-altering experience in Vietnam when a blast left the narrator in a clear and brilliant blackness. For thirty-seven years afterward he searched esoteric texts and distant corners of learning for self-knowledge. A turning point came when the veil lifted, and he turned his reading toward the sayings of masters: Buddha, Christ, Lao Tsu, Patanjali. Though he later encountered the Ashtavakra Gita unexpectedly, its concise voice spoke more directly than other translations. He collected various versions, valuing literal Sanskrit for reference but needing patient study, and finding that English renderings often lacked rhythm or nuance. The Preface highlights key themes drawn from the Gita: Self as Light, the world as a mirage that vanishes when seen truly, and liberation as freedom from attachment and effort. The translator notes how the text challenges conventional action and mind, emphasizing non-duality and inner stillness as taught by Janaka and Ashtavakra, ending with the promise No more can be said.",
-            "source_name": "Ashtavakra-Gita-English.pdf"
-        },
-        {
-            "source_type": "URL",
-            "source_id": "8ff28940-0147-49e0-a56c-fc9852cb97e3",
-            "source_name": "https://www.webmd.com/healthy-aging/ss/slideshow-longer-life-secrets",
-            "source_summary": "The document surveys longevity and healthy aging, citing sources such as the Preventative Medicine Research Institute, The Lancet Oncology, and The Longevity Project. It highlights practical lifestyle factors consistently linked with longer life and lower disease risk. Key recommendations include safety behaviors (wearing safety gear and seatbelts) to prevent accidental death; prioritizing quality sleep and regular naps to reduce obesity, diabetes, heart disease, and mood disorders; and following dietary patterns like the Mediterranean diet (fruits, vegetables, olive oil, fish) or Okinawan-style eating with mindful portions. It also notes that moderate alcohol use, or abstinence, may be protective; regular physical activity; maintaining a healthy weight, especially belly fat; social and spiritual engagement (e.g., marriage, attending religious services); and the cumulative value of small, consistent changes toward healthier living."
-        }
-    ]
+    allDocsSummary = response.json().get("message")
     
     # Validate Summaries
     valid_docs_summary: List[SubState] = [SubState.model_validate(item) for item in allDocsSummary]
