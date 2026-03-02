@@ -4,6 +4,8 @@ from fastmcp import FastMCP
 from typing import Literal
 from pydantic import Field
 from langchain_community.utilities import GoogleSerperAPIWrapper
+from langchain_community.utilities import DuckDuckGoSearchAPIWrapper
+from langchain_community.tools import DuckDuckGoSearchResults
 
 # All workflows
 from workflows.workflow_source_config import workflow
@@ -87,17 +89,38 @@ def search_tool(
         - Type: Type of the query must be one of 'news' or 'search'.
 
     Output:
-        - String that contains context based on user's query.
+        - String that contains context based on user's query from both search engine [Google Serper & DuckDuckGo].
 
-    Search user query using google serper tool which fetches top information from the google search engine. 
+    Fetch context from both engines ensuring if one will fail to respond then another will hendle.
+    Search user query using google serper tool and duckduckgo which fetches top information from the google and duckduckgo search engine. 
     """
+
+    # Final Context String
+    final_context = ""
+
+    # Google Serper Search Engine
     engine = GoogleSerperAPIWrapper(type=type)
-    print(query, type)
+    
+    # Fetch context from google serper
     try: 
         results = engine.run(query)
-        return results
+        final_context += results
+        final_context += "\n\n\n"
     except:
-        return "Failed to search nothing in context."
+        final_context += "Failed to fetch context with google serper.\n\n"
+    
+    wrapper = DuckDuckGoSearchAPIWrapper(max_results=5, source=type)
+    ddg_engine = DuckDuckGoSearchResults(api_wrapper=wrapper, source=type)
+
+    # Fetch context from duckduckgo
+    try:
+        results = ddg_engine.invoke(query)
+        final_context += results
+    except:
+        final_context += "Failed to fetch context with duckduckgo."
+
+    return final_context
+
 
 if __name__ == "__main__":
     mcp.run(
