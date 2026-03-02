@@ -99,6 +99,38 @@ def search_tool(
     except:
         return "Failed to search nothing in context."
 
+@mcp.tool(
+    name="web_search",
+    description="Fetch real-time information from internet."
+)
+def web_search(query: str, num_results: int = 5):
+    """
+    Search the internet when vector DB lacks latest data.
+    Returns structured search results usable by LLM.
+    """
+
+    import requests
+
+    url = "https://api.duckduckgo.com/"
+    params = {
+        "q": query,
+        "format": "json"
+    }
+
+    data = requests.get(url, params=params).json()
+
+    results = []
+
+    for item in data.get("RelatedTopics", [])[:num_results]:
+        if "Text" in item:
+            results.append({
+                "title": item["Text"],
+                "url": item.get("FirstURL", ""),
+                "snippet": item["Text"]
+            })
+
+    return results
+
 if __name__ == "__main__":
     mcp.run(
         transport="http",
